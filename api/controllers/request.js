@@ -5,12 +5,6 @@ var mongoose = require('mongoose'),
 
 exports.listRequests = (req, res) => {
 	res.status(200).json({ message: 'Connected!'  });
-	/*Request.find({}, (err, request) => {
-		if (err) {
-			res.send(err);
-		}
-		res.status(200).json({ message: 'Connected!'  });
-	});*/
 };
 
 exports.createRequest = (req, res) => {
@@ -18,5 +12,13 @@ exports.createRequest = (req, res) => {
 };
 
 exports.readRequest = (req, res) => {
+	res.status(200).json({ message: 'Reading request'  });
+};
+
+exports.updateRequest = (req, res) => {
 	res.status(200).json({ message: 'Updating request'  });
+};
+
+exports.deleteRequest = (req, res) => {
+	res.status(200).json({ message: 'Deleting request'  });
 };
