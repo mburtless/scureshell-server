@@ -2,17 +2,18 @@ var express = require('express'),
 	app = express(),
 	port = process.env.PORT || 3000,
 	mongoose = require('mongoose'),
-	mongoDB = 'mongodb://localhost:27017/scureshelldb',
 	Environment = require('./api/models/environmentModel'),
 	Request = require('./api/models/requestModel'),
-	routes = require('./api/routes');
+	routes = require('./api/routes'),
+	morgan = require('morgan'),
+	config = require('config'),
 	bodyParser = require('body-parser');
 
 // Init mongoose instance
 mongoose.Promise = global.Promise;
-mongoose.connect(mongoDB).then(
-	() => { console.log('Mongoose is connected to ' + mongoDB)  },
-	err => {console.log('Mongoose was not able to connect to ' + mongoDB + err)}
+mongoose.connect(config.DBHost).then(
+	() => { console.log('Mongoose is connected to ' + config.DBHost)  },
+	err => {console.log('Mongoose was not able to connect to ' + config.DBHost + err)}
 );
 
 
@@ -35,6 +36,12 @@ process.on('SIGINT', function() {
     process.exit(0); 
   }); 
 }); 
+
+//Don't show morgan log in test env
+if(config.util.getEnv('NODE_ENV') !== 'test') {
+	// Use morgan to log at cli
+	app.use(morgan('combined'));
+}
 
 app.use(bodyParser.urlencoded({ extended: true  }));
 app.use(bodyParser.json());
