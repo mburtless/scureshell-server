@@ -12,7 +12,10 @@ var express = require('express'),
 // Init mongoose instance
 mongoose.Promise = global.Promise;
 mongoose.connect(config.DBHost).then(
-	() => { console.log('Mongoose is connected to ' + config.DBHost)  },
+	() => { 
+		console.log('Mongoose is connected to ' + config.DBHost);
+		app.emit("db_connected"); // Intercepted by testing
+	},
 	err => {console.log('Mongoose was not able to connect to ' + config.DBHost + err)}
 );
 
@@ -49,5 +52,6 @@ app.use(bodyParser.json());
 // register routes
 app.use('/', routes);
 app.listen(port);
-
 console.log('scureshell server started, API listening on: ' + port);
+
+module.exports = app; // for testing
