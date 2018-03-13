@@ -4,30 +4,53 @@ var mongoose = require('mongoose'),
 	Environment = mongoose.model('Environments');
 
 exports.listEnvironments = (req, res) => {
-	Environment.find({}, (err, env) => {
+	Environment.find({}, (err, environment) => {
 		if (err) {
 			res.send(err);
 		}
-		res.json(env);
+		res.json(environment);
 	});
 };
 
 exports.createEnvironment = (req, res) => {
 	var newEnvironment = new Environment(req.body);
-	console.log(newEnvironment);
-	newEnvironment.save((err, task) => {
-		err ? res.send(err) : res.status(200).json(task);
+	//console.log(newEnvironment);
+	newEnvironment.save((err, environment) => {
+		if (err) {
+			res.send(err);
+		} else {
+			res.json({message: "Environment added", environment});
+		}
+		//err ? res.send(err) : res.status(200).json({env});
 	})
 };
 
 exports.readEnvironment = (req, res) => {
-	res.status(200).json({ message: 'Reading environment'  });
+	Environment.findById(req.params.environmentId, (err, environment) => {
+		if (err) {
+			res.send(err);
+		} else {
+			res.json(environment);
+		}
+	});
 };
 
 exports.updateEnvironment = (req, res) => {
-	res.status(200).json({ message: 'Updating environment'  });
+	Environment.findOneAndUpdate({_id: req.params.environmentId}, req.body, {new: true}, (err, environment) => {
+		if (err) {
+			res.send(err);
+		} else {
+			res.json({message: "Environment updated", environment});
+		}
+	});
 };
 
 exports.deleteEnvironment = (req, res) => {
-	res.status(200).json({ message: 'Deleting environment'  });
+	Environment.remove({_id: req.params.environmentId}, (err, result) => {
+		if (err) {
+			res.send(err);
+		} else {
+			res.json({message: "Environment deleted", result});
+		}
+	});
 };
