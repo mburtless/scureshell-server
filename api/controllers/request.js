@@ -4,7 +4,13 @@ var mongoose = require('mongoose'),
 	Request = mongoose.model('Requests');
 
 exports.listRequests = (req, res) => {
-	res.status(200).json({ message: 'Connected!'  });
+	Request.find({}, (err, request) => {
+		if (err) {
+			res.send(err);
+		}
+		res.json(request);
+	});
+
 };
 
 exports.createRequest = (req, res) => {

@@ -29,7 +29,7 @@ db.on('error', (err) => {
 
 db.on('disconnected', () => {
 	console.error('MongoDB default connection disconnected');
-	process.exit(1);
+	process.exit(0);
 });
 
 // If the Node process ends, close the Mongoose connection 

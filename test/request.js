@@ -1,23 +1,24 @@
-var environmentModel = require('../api/models/environmentModel');
+var requestModel = require('../api/models/requestModel');
 
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var should = chai.should();
-var server = require('./init.js')
+var server = require('./init.js');
+
 chai.use(chaiHttp);
 
-describe('Environments', () => {
+describe('Requests', () => {
 	// Empty the DB before each test
 	beforeEach((done) => {
-		environmentModel.remove({}, (err) => {
+		requestModel.remove({}, (err) => {
 				done();
 		});
 	});
 
-	describe('/GET environment', () => {
-		it('it should GET all the environments', (done) => {
+	describe('/GET request', () => {
+		it('it should GET all the requests', (done) => {
 			chai.request(server)
-				.get('/environment')
+				.get('/request')
 				.end((err, res) => {
 					res.should.have.status(200);
 					res.body.should.be.a('array');
@@ -26,7 +27,7 @@ describe('Environments', () => {
 				});
 		});
 	});
-
+	/*
 	describe('/POST environment', () => {
 		it('it should not POST an environment without name field', (done) => {
 			let environment = {
@@ -123,5 +124,5 @@ describe('Environments', () => {
 					});
 			});
 		});
-	});
+	});*/
 });
