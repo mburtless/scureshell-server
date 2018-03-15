@@ -48,6 +48,7 @@ describe('Sign', () => {
 					console.log("Environment id is " + testEnvironmentId + " and request id is " + testRequestId);
 					res.should.have.status(200);
 					res.should.be.html;
+				  done();
 				});
 		});
 	});
