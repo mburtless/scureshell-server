@@ -1,5 +1,5 @@
 'use strict';
-
+ 
 var mongoose = require('mongoose'),
 	Request = mongoose.model('Requests');
 
@@ -14,17 +14,42 @@ exports.listRequests = (req, res) => {
 };
 
 exports.createRequest = (req, res) => {
-	res.status(200).json({ message: 'Request recieved'  });
+	var newRequest = new Request(req.body);
+	newRequest.save((err, request) => {
+		if (err) {
+			res.send(err);
+		} else {
+			res.json({message: "Request added", request});
+		}
+	});
 };
 
 exports.readRequest = (req, res) => {
-	res.status(200).json({ message: 'Reading request'  });
+	Request.findById(req.params.requestId, (err, request) => {
+		if (err) {
+			res.send(err);
+		} else {
+			res.json(request);
+		}
+	});
 };
 
 exports.updateRequest = (req, res) => {
-	res.status(200).json({ message: 'Updating request'  });
+	Request.findOneAndUpdate({_id: req.params.requestId}, req.body, {new: true}, (err, request) => {
+		if (err) {
+			res.send(err);
+		} else {
+			res.json({message: "Request updated", request});
+		}
+	});
 };
 
 exports.deleteRequest = (req, res) => {
-	res.status(200).json({ message: 'Deleting request'  });
+	Request.remove({_id: req.params.requestId}, (err, result) => {
+		if (err) {
+			res.send(err);
+		} else {
+			res.json({message: "Request deleted", result});
+		}
+	});
 };

@@ -12,8 +12,10 @@ before((done) => {
 	});
 });
 
+// Close connection after all tests are complete
 after((done) => {
 	mongoose.connection.close(done);
 });
 
+// Export server instance for use by other tests
 module.exports = server;

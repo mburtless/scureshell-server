@@ -89,7 +89,7 @@ describe('Environments', () => {
 	});
 
 	describe('/PUT/:id environment', () => {
-		it('it should UPDATE a book given the id', (done) => {
+		it('it should UPDATE an environment given the id', (done) => {
 			let environment = new environmentModel({name: "foo env", user_cert: "user.ca", host_cert: "host.ca"});
 			environment.save((err, environment) => {
 				chai.request(server)
@@ -108,7 +108,7 @@ describe('Environments', () => {
 	});
 	
 	describe('/DELETE/:id environment', () => {
-		it('it should DELETE a book given the id', (done) => {
+		it('it should DELETE an environment given the id', (done) => {
 			let environment = new environmentModel({name: "test env", user_cert: "user.ca", host_cert: "host.ca"});
 			environment.save((err, environment) => {
 				chai.request(server)

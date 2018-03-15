@@ -1,13 +1,29 @@
 var requestModel = require('../api/models/requestModel');
-
+var environmentModel = require('../api/models/environmentModel');
+var mongoose = require('mongoose');
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var should = chai.should();
 var server = require('./init.js');
-
+var testEnvironmentId = ""; // hold id of environment to reference in requests
 chai.use(chaiHttp);
 
 describe('Requests', () => {
+	// before testing, add an environment to reference in our requests
+	before((done) => {
+		let environment = new environmentModel({
+				name: "test env",
+				user_cert: "user.ca",
+				host_cert: "host.ca"
+		});
+		chai.request(server)
+			.post('/environment')
+			.send(environment)
+			.end((err, res) => {
+				testEnvironmentId = environment.id.toString();
+				done();
+			})
+	});
 	// Empty the DB before each test
 	beforeEach((done) => {
 		requestModel.remove({}, (err) => {
@@ -27,102 +43,123 @@ describe('Requests', () => {
 				});
 		});
 	});
-	/*
-	describe('/POST environment', () => {
-		it('it should not POST an environment without name field', (done) => {
-			let environment = {
-				user_cert: "user.ca",
-				host_cert: "host.ca"
+	
+	describe('/POST request', () => {
+		it('it should not POST a request without environment_id field', (done) => {
+			let request = {
+				user_id: "2",
+				status: "pending"
 			}
 
 			chai.request(server)
-				.post('/environment')
-				.send(environment)
+				.post('/request')
+				.send(request)
 				.end((err, res) => {
 					res.should.have.status(200);
 					res.body.should.be.a('object');
 					res.body.should.have.property('errors');
-					res.body.errors.should.have.property('name');
-					res.body.errors.name.should.have.property('kind').eql('required');
+					res.body.errors.should.have.property('environment_id');
+					res.body.errors.environment_id.should.have.property('kind').eql('required');
 				  done()
 				});
 		});
-		it('it should POST an environment', (done) => {
-			let environment = {
-				name: "test env",
-				user_cert: "user.ca",
-				host_cert: "host.ca"
-			}
-
+		it('it should POST a request', (done) => {
+			// DEBUG - Checking to make sure environment is still present
 			chai.request(server)
-				.post('/environment')
-				.send(environment)
+				.get('/environment');
+				
+			let request = {
+				environment_id: testEnvironmentId,
+				user_id: "2",
+				status: "pending"
+			};
+			chai.request(server)
+				.post('/request')
+				.send(request)
 				.end((err, res) => {
 					res.should.have.status(200);
 					res.body.should.be.a('object');
-					res.body.should.have.property('message').eql('Environment added');
-					res.body.environment.should.have.property('name');
-					res.body.environment.should.have.property('user_cert');
-					res.body.environment.should.have.property('host_cert');
+					res.body.should.have.property('message').eql('Request added');
+					res.body.request.should.have.property('environment_id');
+					res.body.request.should.have.property('user_id');
+					res.body.request.should.have.property('status');
 				  done()
 				});
 		});
 	});
 	
-	describe('/GET/:id environment', () => {
-		it('it should GET an environment by the given id', (done) => {
-			let environment = new environmentModel({ name: "test env", user_cert: "user.ca", host_cert: "host.ca" })
-			environment.save((err, environment) => {
+	describe('/GET/:id request', () => {
+		it('it should GET a request by the given id', (done) => {
+			let request = new requestModel ({
+				environment_id: testEnvironmentId,
+				user_id: "2",
+				status: "pending"
+			});
+			request.save((err, request) => {
 				chai.request(server)
-					.get('/environment/' + environment.id)
-					.send(environment)
+					.get('/request/' + request.id)
+					.send(request)
 					.end((err, res) => {
 						res.should.have.status(200);
 						res.body.should.be.a('object');
-						res.body.should.have.property('name');
-						res.body.should.have.property('user_cert');
-						res.body.should.have.property('host_cert');
-						res.body.should.have.property('_id').eql(environment.id);
+						res.body.should.have.property('environment_id');
+						res.body.should.have.property('user_id');
+						res.body.should.have.property('status');
+						res.body.should.have.property('_id').eql(request.id);
 					  done();
 					});
 			});
 		});
 	});
 
-	describe('/PUT/:id environment', () => {
-		it('it should UPDATE a book given the id', (done) => {
-			let environment = new environmentModel({name: "foo env", user_cert: "user.ca", host_cert: "host.ca"});
-			environment.save((err, environment) => {
+	describe('/PUT/:id request', () => {
+		it('it should UPDATE a request given the id', (done) => {
+			let request = new requestModel ({
+				environment_id: testEnvironmentId,
+				user_id: "2",
+				status: "pending"
+			});
+			request.save((err, request) => {
 				chai.request(server)
-					.put('/environment/' + environment.id)
-					.send({name: "bar env", user_cert: "user.ca", host_cert: "host.ca"})
+					.put('/request/' + request.id)
+					.send({environment_id: testEnvironmentId, user_id: "2", status: "ongoing"})
 					.end((err, res) => {
 						res.should.have.status(200);
 						res.body.should.be.a('object');
-						res.body.should.have.property('message').eql('Environment updated');
-						res.body.environment.should.have.property('name').eql('bar env');
-						res.body.environment.should.have.property('_id').eql(environment.id);
+						res.body.should.have.property('message').eql('Request updated');
+						res.body.request.should.have.property('status').that.is.an('array').that.deep.equals(['ongoing']);
+						res.body.request.should.have.property('_id').eql(request.id);
 					  done();
 					});
 			});
 		});
 	});
 	
-	describe('/DELETE/:id environment', () => {
-		it('it should DELETE a book given the id', (done) => {
-			let environment = new environmentModel({name: "test env", user_cert: "user.ca", host_cert: "host.ca"});
-			environment.save((err, environment) => {
+	describe('/DELETE/:id request', () => {
+		it('it should DELETE a request given the id', (done) => {
+			let request = new requestModel ({
+				environment_id: testEnvironmentId,
+				user_id: "2",
+				status: "pending"
+			});
+			request.save((err, request) => {
 				chai.request(server)
-					.delete('/environment/' + environment.id)
+					.delete('/request/' + request.id)
 					.end((err, res) => {
 						res.should.have.status(200);
 						res.body.should.be.a('object');
-						res.body.should.have.property('message').eql('Environment deleted');
+						res.body.should.have.property('message').eql('Request deleted');
 						res.body.result.should.have.property('ok').eql(1);
 						res.body.result.should.have.property('n').eql(1);
 					  done();
 					});
 			});
 		});
-	});*/
+	});
+	// Empty the environment DB after tests
+	after((done) => {
+		environmentModel.remove({}, (err) => {
+				done();
+		});
+	});
 });
