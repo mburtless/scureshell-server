@@ -18,7 +18,7 @@ var RequestSchema = new Schema({
 	status: {
 		type: [{
 			type: String,
-			enum: ['pending', 'ongoing', 'compleated']
+			enum: ['pending', 'signed', 'compleated']
 		}],
 		default: ['pending']
 	}

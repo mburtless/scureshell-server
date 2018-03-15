@@ -122,12 +122,12 @@ describe('Requests', () => {
 			request.save((err, request) => {
 				chai.request(server)
 					.put('/request/' + request.id)
-					.send({environment_id: testEnvironmentId, user_id: "2", status: "ongoing"})
+					.send({environment_id: testEnvironmentId, user_id: "2", status: "signed"})
 					.end((err, res) => {
 						res.should.have.status(200);
 						res.body.should.be.a('object');
 						res.body.should.have.property('message').eql('Request updated');
-						res.body.request.should.have.property('status').that.is.an('array').that.deep.equals(['ongoing']);
+						res.body.request.should.have.property('status').that.is.an('array').that.deep.equals(['signed']);
 						res.body.request.should.have.property('_id').eql(request.id);
 					  done();
 					});
