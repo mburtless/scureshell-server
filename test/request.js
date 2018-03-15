@@ -65,8 +65,8 @@ describe('Requests', () => {
 		});
 		it('it should POST a request', (done) => {
 			// DEBUG - Checking to make sure environment is still present
-			chai.request(server)
-				.get('/environment');
+			/*chai.request(server)
+				.get('/environment');*/
 				
 			let request = {
 				environment_id: testEnvironmentId,
