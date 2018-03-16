@@ -4,7 +4,9 @@
   "description": "SSH CA Server",
   "main": "server.js",
   "scripts": {
-    "test": "mocha --timeout 10000",
+    "test": "export NODE_ENV=test && mocha --timeout 10000",
+    "docker-test": "export NODE_ENV=docker-test && mocha --timeout 10000",
+    "docker-start": "export NODE_ENV=docker && node server.js",
     "start": "export NODE_ENV=dev && nodemon server.js"
   },
   "author": "Matthew Burtless",

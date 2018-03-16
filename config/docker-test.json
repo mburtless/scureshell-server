@@ -1,0 +1,3 @@
+{
+	"DBHost": "mongodb://10.0.19.114:27017/scureshelldb-test"
+}

@@ -41,7 +41,7 @@ process.on('SIGINT', function() {
 }); 
 
 //Don't show morgan log in test env
-if(config.util.getEnv('NODE_ENV') !== 'test') {
+if(config.util.getEnv('NODE_ENV') !== 'test' && config.util.getEnv('NODE_ENV') !== 'docker-test') {
 	// Use morgan to log at cli
 	app.use(morgan('combined'));
 }

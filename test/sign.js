@@ -45,7 +45,7 @@ describe('Sign', () => {
 			chai.request(server)
 				.get('/sign')
 				.end((err, res) => {
-					console.log("Environment id is " + testEnvironmentId + " and request id is " + testRequestId);
+					//console.log("Environment id is " + testEnvironmentId + " and request id is " + testRequestId);
 					res.should.have.status(200);
 					res.should.be.html;
 				  done();
