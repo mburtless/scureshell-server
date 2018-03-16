@@ -34,6 +34,16 @@ exports.readRequest = (req, res) => {
 	});
 };
 
+exports.readRequestById = (requestId) => {
+	var query = Request.findById(requestId);
+	return query;
+};
+
+exports.completeRequest = (requestId) => {
+	var query = Request.findOneAndUpdate({_id: requestId}, {$set: {status: 'compleated'}});
+	return query;
+};
+
 exports.updateRequest = (req, res) => {
 	Request.findOneAndUpdate({_id: req.params.requestId}, req.body, {new: true}, (err, request) => {
 		if (err) {

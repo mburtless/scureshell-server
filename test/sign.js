@@ -52,6 +52,92 @@ describe('Sign', () => {
 				});
 		});
 	});
+
+	describe('/POST sign', () => {
+		it('it should not POST a certificate for a request whose request_id does not exist', (done) => {
+			let signingRequest = {
+				publickey: 'some_dumb_key',
+				user_id: "2",
+				request_id: 'dummyrequestid'
+			}
+			chai.request(server)
+				.post('/sign')
+				.send(signingRequest)
+				.end((err, res) => {
+					res.should.have.status(400);
+					res.body.should.be.a('object');
+					res.body.should.have.property('status').eql(400);
+					res.body.should.have.property('data').eql(null);
+					res.body.should.have.property('message');
+					res.body.message.should.not.eql(null);
+				  done();
+				});
+		});
+		it('it should not POST a certificate for a request that has not been signed', (done) => {
+			let signingRequest = {
+				publickey: 'some_dumb_key',
+				user_id: "2",
+				request_id: testRequestId
+			}
+			chai.request(server)
+				.post('/sign')
+				.send(signingRequest)
+				.end((err, res) => {
+					res.should.have.status(400);
+					res.body.should.be.a('object');
+					res.body.should.have.property('status').eql(400);
+					res.body.should.have.property('data').eql(null);
+					res.body.should.have.property('message');
+					res.body.message.should.not.eql(null);
+				  done();
+				});
+		});
+		it('it should POST a certificate for a valid request', (done) => {
+			let signingRequest = {
+				publickey: 'some_dumb_key',
+				user_id: "2",
+				request_id: testRequestId
+			}
+			chai.request(server)
+				.put('/request/' + testRequestId) //sign the test request created in before()
+				.send({environment_id: testEnvironmentId, user_id: "2", status: "signed"})
+				.end((err, res) => {
+					// Now that request is signed, we can POST signing request
+					chai.request(server)
+						.post('/sign')
+						.send(signingRequest)
+						.end((err, res) => {
+							res.should.have.status(200);
+							res.body.should.be.a('object');
+							res.body.should.have.property('status').eql(200);
+							res.body.should.have.property('data');
+							res.body.data.should.be.a('array');
+							res.body.should.have.nested.property('data[0].signedkey');
+						  done();
+						});
+				});
+		});
+		it('it should not POST a certificate for a request that has been compleated', (done) => {
+			let signingRequest = {
+				publickey: 'some_dumb_key',
+				user_id: "2",
+				request_id: testRequestId
+			}
+			chai.request(server)
+				.post('/sign')
+				.send(signingRequest)
+				.end((err, res) => {
+					res.should.have.status(400);
+					res.body.should.be.a('object');
+					res.body.should.have.property('status').eql(400);
+					res.body.should.have.property('data').eql(null);
+					res.body.should.have.property('message');
+					res.body.message.should.not.eql(null);
+				  done();
+				});
+		});
+
+	});
 	// Empty the environment and request DB after tests
 	after((done) => {
 		requestModel.remove({}, (err) => {
