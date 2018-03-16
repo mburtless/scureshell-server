@@ -17,7 +17,8 @@ exports.createRequest = (req, res) => {
 	var newRequest = new Request(req.body);
 	newRequest.save((err, request) => {
 		if (err) {
-			res.send(err);
+			console.log("env id not foun!d");
+			res.status(400).json({ status: 400, data: null, message: "Environment_id submitted is invalid or does not exist" });
 		} else {
 			res.json({message: "Request added", request});
 		}

@@ -55,11 +55,32 @@ describe('Requests', () => {
 				.post('/request')
 				.send(request)
 				.end((err, res) => {
-					res.should.have.status(200);
+					res.should.have.status(400);
 					res.body.should.be.a('object');
-					res.body.should.have.property('errors');
-					res.body.errors.should.have.property('environment_id');
-					res.body.errors.environment_id.should.have.property('kind').eql('required');
+					res.body.should.have.property('status').eql(400);
+					res.body.should.have.property('data').eql(null);
+					res.body.should.have.property('message');
+					res.body.message.should.not.eql(null);
+				  done()
+				});
+		});
+		it('it should not POST a request with an invalid environment_id field', (done) => {
+			let request = {
+				environment_id: "fake_id",
+				user_id: "2",
+				status: "pending"
+			}
+
+			chai.request(server)
+				.post('/request')
+				.send(request)
+				.end((err, res) => {
+					res.should.have.status(400);
+					res.body.should.be.a('object');
+					res.body.should.have.property('status').eql(400);
+					res.body.should.have.property('data').eql(null);
+					res.body.should.have.property('message');
+					res.body.message.should.not.eql(null);
 				  done()
 				});
 		});
