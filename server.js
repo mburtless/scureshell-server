@@ -1,6 +1,5 @@
 var express = require('express'),
 	app = express(),
-	port = process.env.PORT || 3000,
 	mongoose = require('mongoose'),
 	Environment = require('./api/models/environmentModel'),
 	Request = require('./api/models/requestModel'),
@@ -51,7 +50,7 @@ app.use(bodyParser.json());
 
 // register routes
 app.use('/', routes);
-app.listen(port);
-console.log('scureshell server started, API listening on: ' + port);
+app.listen(config.Port);
+console.log('scureshell server started, API listening on: ' + config.Port);
 
 module.exports = app; // for testing

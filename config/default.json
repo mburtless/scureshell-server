@@ -1,3 +1,4 @@
 {
-	"DBHost": "mongodb://localhost:27017/scureshelldb"
+	"DBHost": "mongodb://localhost:27017/scureshelldb",
+	"Port": "3000"
 }

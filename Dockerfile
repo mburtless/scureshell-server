@@ -20,6 +20,7 @@ RUN npm install
 FROM dependencies AS test
 # Copy the rest of the app
 COPY . .
+ENV SS_DBHOST=mongodb://10.0.19.114:27017/scureshelldb-test
 RUN npm run docker-test
 
 # ---- Release ----
@@ -28,5 +29,6 @@ FROM base AS release
 COPY --from=dependencies /usr/src/scureshell-server/prod_node_modules ./node_modules
 # Copy rest of app
 COPY . .
+ENV SS_DBHOST=mongodb://10.0.19.114:27017/scureshelldb
 EXPOSE 3000
 CMD ["npm", "run", "docker-start"]
