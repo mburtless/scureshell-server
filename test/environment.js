@@ -30,19 +30,20 @@ describe('Environments', () => {
 	describe('/POST environment', () => {
 		it('it should not POST an environment without name field', (done) => {
 			let environment = {
-				user_cert: "user.ca",
-				host_cert: "host.ca"
+				user_cert: "test_users_ca",
+				host_cert: "test_server_ca"
 			}
 
 			chai.request(server)
 				.post('/environment')
 				.send(environment)
 				.end((err, res) => {
-					res.should.have.status(200);
+					res.should.have.status(400);
 					res.body.should.be.a('object');
-					res.body.should.have.property('errors');
-					res.body.errors.should.have.property('name');
-					res.body.errors.name.should.have.property('kind').eql('required');
+					res.body.should.have.property('status').eql(400);
+					res.body.should.have.property('data').eql(null);
+					res.body.should.have.property('message');
+					res.body.message.should.not.eql(null);
 				  done()
 				});
 		});
@@ -69,8 +70,8 @@ describe('Environments', () => {
 		it('it should POST an environment', (done) => {
 			let environment = {
 				name: "test env",
-				user_cert: "user.ca",
-				host_cert: "host.ca"
+				user_cert: "test_users_ca",
+				host_cert: "test_server_ca"
 			}
 
 			chai.request(server)
@@ -90,7 +91,7 @@ describe('Environments', () => {
 	
 	describe('/GET/:id environment', () => {
 		it('it should GET an environment by the given id', (done) => {
-			let environment = new environmentModel({ name: "test env", user_cert: "user.ca", host_cert: "host.ca" })
+			let environment = new environmentModel({ name: "test env", user_cert: "test_users_ca", host_cert: "test_server_ca" })
 			environment.save((err, environment) => {
 				chai.request(server)
 					.get('/environment/' + environment.id)
@@ -110,11 +111,11 @@ describe('Environments', () => {
 
 	describe('/PUT/:id environment', () => {
 		it('it should UPDATE an environment given the id', (done) => {
-			let environment = new environmentModel({name: "foo env", user_cert: "user.ca", host_cert: "host.ca"});
+			let environment = new environmentModel({name: "foo env", user_cert: "test_users_ca", host_cert: "test_server_ca"});
 			environment.save((err, environment) => {
 				chai.request(server)
 					.put('/environment/' + environment.id)
-					.send({name: "bar env", user_cert: "user.ca", host_cert: "host.ca"})
+					.send({name: "bar env", user_cert: "test_users_ca", host_cert: "test_server_ca"})
 					.end((err, res) => {
 						res.should.have.status(200);
 						res.body.should.be.a('object');
@@ -129,7 +130,7 @@ describe('Environments', () => {
 	
 	describe('/DELETE/:id environment', () => {
 		it('it should DELETE an environment given the id', (done) => {
-			let environment = new environmentModel({name: "test env", user_cert: "user.ca", host_cert: "host.ca"});
+			let environment = new environmentModel({name: "test env", user_cert: "test_users_ca", host_cert: "test_server_ca"});
 			environment.save((err, environment) => {
 				chai.request(server)
 					.delete('/environment/' + environment.id)

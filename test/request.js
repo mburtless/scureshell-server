@@ -13,8 +13,8 @@ describe('Requests', () => {
 	before((done) => {
 		let environment = new environmentModel({
 				name: "test env",
-				user_cert: "user.ca",
-				host_cert: "host.ca"
+				user_cert: "test_users_ca",
+				host_cert: "test_server_ca"
 		});
 		chai.request(server)
 			.post('/environment')

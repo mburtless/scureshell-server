@@ -26,7 +26,7 @@ var RequestSchema = new Schema({
 
 // Pre save middleware to verify that environment_id submitted exists in environment collection
 RequestSchema.pre('save', function (next) {
-	console.log("Verifying env id exists: ", this.environment_id);
+	//console.log("Verifying env id exists: ", this.environment_id);
 	Environments.findById(this.environment_id, (err, environment) => {
 		if (environment) {
 			return next();

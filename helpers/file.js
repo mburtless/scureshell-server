@@ -1,6 +1,6 @@
 var fs = require('fs');
 
-exports.checkDir = (dir) => {
+exports.checkDirExists = (dir) => {
 	return new Promise((resolve, reject) => {
 		fs.stat(dir, (err, stats) => {
 			if(err){
@@ -12,7 +12,7 @@ exports.checkDir = (dir) => {
 	});
 }
 
-exports.checkDirSync = (dir) => {
+exports.checkDirExistsSync = (dir) => {
 	try {
 		return fs.statSync(dir).isDirectory();
 	}
@@ -20,4 +20,16 @@ exports.checkDirSync = (dir) => {
 		if(err.code == 'ENOENT') return false;
 		else throw err;
 	}
+}
+
+exports.checkFileExists = (file) => {
+	return new Promise((resolve, reject) => {
+		fs.stat(file, (err, stats) => {
+			if(err){
+				if(err.code == 'ENOENT') resolve(false);
+				else reject(err);
+			}
+			else resolve(stats.isFile());
+		});
+	});
 }

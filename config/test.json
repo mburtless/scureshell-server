@@ -1,5 +1,5 @@
 {
 	"DBHost": "mongodb://localhost:27017/scureshelldb-test",
 	"Port": "3000",
-	"CertDirectory": "./test/test_certs"
+	"CertDirectory": "test/test_certs"
 }

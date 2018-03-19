@@ -18,7 +18,8 @@ exports.createEnvironment = (req, res) => {
 	//console.log(newEnvironment);
 	newEnvironment.save((err, environment) => {
 		if (err) {
-			res.send(err);
+			//res.send(err);
+			res.status(400).json({ status: 400, data: null, message: err.message })
 		} else {
 			res.json({message: "Environment added", environment});
 		}

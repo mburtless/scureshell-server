@@ -9,6 +9,9 @@ var express = require('express'),
 	fileHelper = require('./helpers/file'),
 	bodyParser = require('body-parser');
 
+// Set basedir global for user in other modules
+global.__basedir = __dirname;
+
 // Init mongoose instance
 mongoose.Promise = global.Promise;
 mongoose.connect(config.DBHost).then(
@@ -55,7 +58,7 @@ process.on('SIGINT', function() {
 });*/
 
 // We need to do this synchronsly because we don't want to start the server without it
-if (!fileHelper.checkDirSync(config.CertDirectory)) {
+if (!fileHelper.checkDirExistsSync(config.CertDirectory)) {
 	console.error('Cert dir does not exist or is not accessible by scureshell');
 	process.exit(1);
 } else {
