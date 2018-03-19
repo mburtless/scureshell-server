@@ -21,4 +21,6 @@ var EnvironmentSchema = new Schema({
 
 });
 
+// Pre save middleware to verify that user_cert and host_cert exist on filesystem
+
 module.exports = mongoose.model('Environments', EnvironmentSchema);

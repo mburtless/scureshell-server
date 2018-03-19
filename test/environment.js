@@ -46,6 +46,26 @@ describe('Environments', () => {
 				  done()
 				});
 		});
+		it('it should not POST an environment if user or host cert does not exist', (done) => {
+			let environment = {
+				name: "fake env",
+				user_cert: "fakeuser.ca",
+				host_cert: "fakehost.ca"
+			}
+
+			chai.request(server)
+				.post('/environment')
+				.send(environment)
+				.end((err, res) => {
+					res.should.have.status(400);
+					res.body.should.be.a('object');
+					res.body.should.have.property('status').eql(400);
+					res.body.should.have.property('data').eql(null);
+					res.body.should.have.property('message');
+					res.body.message.should.not.eql(null);
+				  done()
+				});
+		});
 		it('it should POST an environment', (done) => {
 			let environment = {
 				name: "test env",

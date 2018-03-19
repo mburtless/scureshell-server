@@ -6,7 +6,8 @@ var mongoose = require('mongoose'),
 exports.listEnvironments = (req, res) => {
 	Environment.find({}, (err, environment) => {
 		if (err) {
-			res.send(err);
+			//res.send(err);
+			res.status(500).json({ status: 500, data: null, message: "Could not get all environments due to internal server error" });
 		}
 		res.json(environment);
 	});

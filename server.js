@@ -6,6 +6,7 @@ var express = require('express'),
 	routes = require('./api/routes'),
 	morgan = require('morgan'),
 	config = require('config'),
+	fileHelper = require('./helpers/file'),
 	bodyParser = require('body-parser');
 
 // Init mongoose instance
@@ -39,6 +40,27 @@ process.on('SIGINT', function() {
   }); 
 }); 
 
+// Make sure cert directory exists
+/*fileHelper.checkDir(config.CertDirectory).then((isDir) => {
+	if (isDir) {
+		console.log('Cert dir exists');
+		exports.certDirectory = config.CertDirectory;
+	} else {
+		console.error('Cert dir does not exist or is not accessible by scureshell');
+		process.exit(1);
+	}
+}).catch((err) => {
+	console.error('Error while reading cert dir: ', err);
+	process.exit(1);
+});*/
+
+// We need to do this synchronsly because we don't want to start the server without it
+if (!fileHelper.checkDirSync(config.CertDirectory)) {
+	console.error('Cert dir does not exist or is not accessible by scureshell');
+	process.exit(1);
+} else {
+	exports.certDirectory = config.CertDirectory;
+}
 //Don't show morgan log in test env
 if(config.util.getEnv('NODE_ENV') !== 'test' && config.util.getEnv('NODE_ENV') !== 'docker-test') {
 	// Use morgan to log at cli
