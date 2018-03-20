@@ -37,6 +37,11 @@ exports.readEnvironment = (req, res) => {
 	});
 };
 
+exports.readEnvironmentById = (environmentId) => {
+	var query = Environment.findById(environmentId);
+	return query;
+};
+
 exports.updateEnvironment = (req, res) => {
 	Environment.findOneAndUpdate({_id: req.params.environmentId}, req.body, {new: true}, (err, environment) => {
 		if (err) {

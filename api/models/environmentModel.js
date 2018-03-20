@@ -22,6 +22,20 @@ var EnvironmentSchema = new Schema({
 	}
 });
 
+//Virtuals to compute full cert path
+EnvironmentSchema.virtual('user_cert_priv_path').get(function() {
+	return __basedir + "/" + config.CertDirectory + "/" + this.user_cert;
+});
+EnvironmentSchema.virtual('user_cert_pub_path').get(function() {
+	return __basedir + "/" + config.CertDirectory + "/" + this.user_cert + ".pub";
+});
+EnvironmentSchema.virtual('host_cert_priv_path').get(function() {
+	return __basedir + "/" + config.CertDirectory + "/" + this.host_cert;
+});
+EnvironmentSchema.virtual('host_cert_pub_path').get(function() {
+	return __basedir + "/" + config.CertDirectory + "/" + this.host_cert + ".pub";
+});
+
 // Pre save middleware to verify that user_cert and host_cert exist on filesystem
 EnvironmentSchema.pre('save', function (next) {
 	//console.log("Verifying " + this.user_cert + " and " + this.host_cert + " exist within " + config.CertDirectory);
