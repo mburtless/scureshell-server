@@ -34,14 +34,34 @@ exports.readRequest = (req, res) => {
 	});
 };
 
-exports.readRequestById = (requestId) => {
-	var query = Request.findById(requestId);
-	return query;
+exports.verifyRequest = (requestId) => {
+	return new Promise((resolve, reject) => {
+		Request.findById(requestId).exec()
+		.then(request => {
+			if(request == null){
+				reject(new Error("Request_id referenced in request could not be found"));
+			} else if(request.status == "pending") {
+				reject(new Error("Request has not yet been signed by certificate signing authority."));
+			} else if(request.status == "compleated") {
+				reject(new Error("Request has already been compleated.  Please submit a new request."));
+			} else {
+				resolve(request);
+			}
+		});
+	});
 };
 
 exports.completeRequest = (requestId) => {
-	var query = Request.findOneAndUpdate({_id: requestId}, {$set: {status: 'compleated'}});
-	return query;
+	return new Promise((resolve, reject) => {
+		Request.findOneAndUpdate({_id: requestId}, {$set: {status: 'compleated'}}).exec()
+			.then(request => {
+				if(request == null) {
+					reject(new Error("Request could not be marked as complete"));
+				} else {
+					resolve(request);
+				}
+			});
+	});
 };
 
 exports.updateRequest = (req, res) => {

@@ -37,9 +37,26 @@ exports.readEnvironment = (req, res) => {
 	});
 };
 
-exports.readEnvironmentById = (environmentId) => {
+/*exports.readEnvironmentById = (environmentId) => {
 	var query = Environment.findById(environmentId);
 	return query;
+};*/
+
+/*exports.readEnvironmentById = (environmentId) => {
+	return Environment.findById(environmentId)
+		.exec();
+}*/
+exports.readEnvironmentById = (environmentId) => {
+	return new Promise((resolve, reject) => {
+		Environment.findById(environmentId).exec()
+		.then(environment => {
+			if(environment == null){
+				reject(new Error("Environment referenced in request could not be found"));
+			} else {
+				resolve(environment);
+			}
+		});
+	});
 };
 
 exports.updateEnvironment = (req, res) => {

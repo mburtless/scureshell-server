@@ -43,6 +43,10 @@ process.on('SIGINT', function() {
   }); 
 }); 
 
+process.on('unhandledRejection', error => {
+	console.log('unhandledRejection: ', error.message);
+});
+
 // Make sure cert directory exists
 /*fileHelper.checkDir(config.CertDirectory).then((isDir) => {
 	if (isDir) {
