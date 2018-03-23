@@ -38,7 +38,6 @@ exports.signSigningRequest = (req, res) => {
 	var hostCa = "";
 	var result = [];
 	var signedKey = "";
-	//console.log("Request in body is ", req.body.request_id)
 	//verify request exists and has valid status
 	requestController.verifyRequest(req.body.request_id)
 		//verify environment referenced in request still exists
@@ -47,17 +46,16 @@ exports.signSigningRequest = (req, res) => {
 		.then((environment) => { 
 			userCa = environment.user_cert_priv_path;
 			hostCa = environment.host_cert_priv_path;
-			//console.log("User CA is ", environment.user_cert_priv_path, " and pub key is ", req.body.public_key);
 			return fileHelper.savePublicKey(req.body.public_key, req.body.request_id);
 		})
 		//sign this thing
 		.then((certFileName) => { return signPublicUserKey(certFileName, userCa) })
-		//mark the request as complete
 		.then((returnedKey) => { 
-			//console.log("Key signed, pushing result to stack");
+			//save the signed key
 			signedKey = returnedKey;
+			//mark the request as complete
 			return requestController.completeRequest(req.body.request_id);
-		})
+		}).then((result) => { return fileHelper.deletePublicKey(req.body.request_id) })
 		.then(() => {
 			res.status(200).json({ status: 200, data: [{"signedkey" : signedKey}] });
 		})

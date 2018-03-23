@@ -44,3 +44,14 @@ exports.savePublicKey = (publicKey, request_id) => {
 		});
 	});
 }
+
+exports.deletePublicKey = (request_id) => {
+	var filename = __basedir + "/" + config.CertDirectory + "/" + request_id + ".pub"
+	//console.log(publicKey);
+	return new Promise((resolve, reject) => {
+		fs.unlink(filename, (err) => {
+			if(err) reject("Public key does not exist or has already been removed");
+			else resolve(filename);
+		});
+	});
+}
