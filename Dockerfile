@@ -1,7 +1,7 @@
 # ---- Base Node ----
 FROM alpine:latest AS base
 RUN apk update && apk upgrade && \
-    apk add --no-cache nodejs nodejs-npm git
+    apk add --no-cache nodejs nodejs-npm git openssh-keygen
 # Working directory for node app
 WORKDIR /usr/src/scureshell-server
 COPY package*.json ./
