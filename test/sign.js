@@ -160,6 +160,19 @@ describe('Sign', () => {
 						done(err)
 					});
 			});
+			it('it should delete public key from filesystem after public key has been signed', (done) => {
+				pubKeyFilename = __basedir + "/" + config.CertDirectory + "/" + testRequestId + ".pub";
+				fs.stat(pubKeyFilename, (err, stats) => {
+					if(err){
+						if(err.code == 'ENOENT') done();
+						else done(err);
+					} else if(stats.isFile()){
+						done(new Error('File still exists'));
+					}
+				});
+				
+			});
+
 			it('it should not POST a certificate for a request that has been compleated', (done) => {
 				let signingRequest = {
 					request_id: request._id,
