@@ -11,18 +11,26 @@ exports.index = (req, res) => {
 	res.status(200).send('NOT IMPLEMENTED: sign home page');
 }
 
-function signPublicUserKey(publicKey, userCa) {
+function signPublicUserKey(publicKey, userCa, idName, principalName, comment, validity) {
 	return new Promise((resolve, reject) => {
-		keygen({
-			comment: 'test',
-			read: true,
-			sign: true,
-			cakey: userCa,
-			publickey: publicKey,
-			identity: 'test user root',
-			validity: '+52w',
-			destroy: true
-		}, function(err, out){
+		if(!comment) var comment = idName + "@scureshell"
+		var keygenParam = {
+				comment: comment,
+				read: true,
+				sign: true,
+				cakey: userCa,
+				publickey: publicKey,
+				identity: 'test user',
+				//principal: 'testuser',
+				//validity: '+52w',
+				destroy: true
+			}
+		//set optional params
+		if(principalName) keygenParam.principal = principalName;
+		if(validity) keygenParam.validity = validity;
+		if(!idName) reject(new Error('Identity is required'))
+		
+		keygen(keygenParam, function(err, out){
 			if(err) {
 				console.log(err);
 				reject(new Error("Public key could not be signed by CA"));
@@ -34,6 +42,18 @@ function signPublicUserKey(publicKey, userCa) {
 }
 
 exports.signSigningRequest = (req, res) => {
+	//verify request body param
+	if (req.body.validity) var validity = req.body.validity
+	else var validity = null
+	if (req.body.principal) var principal = req.body.principal
+	else var principal = null
+	if (req.body.comment) var comment = req.body.comment
+	else var comment = null
+	if (req.body.identity) var identity = req.body.identity
+	else var identity = req.body.user_id
+	
+
+	//set empty vars to hold returns from promises
 	var userCa = "";
 	var hostCa = "";
 	var result = [];
@@ -49,7 +69,7 @@ exports.signSigningRequest = (req, res) => {
 			return fileHelper.savePublicKey(req.body.public_key, req.body.request_id);
 		})
 		//sign this thing
-		.then((certFileName) => { return signPublicUserKey(certFileName, userCa) })
+		.then((certFileName) => { return signPublicUserKey(certFileName, userCa, identity, principal, comment, validity) })
 		.then((returnedKey) => { 
 			//save the signed key
 			signedKey = returnedKey;
