@@ -90,6 +90,23 @@ describe('Environments', () => {
 	});
 	
 	describe('/GET/:id environment', () => {
+		it('it should not GET an environment with an invalid id', (done) => {
+			let environment = new environmentModel({ name: "fake env", user_cert: "fake_ca", host_cert: "fake_ca" })
+			environment.save((err, environment) => {
+				chai.request(server)
+					.get('/environment/' + "fakeid")
+					.send(environment)
+					.end((err, res) => {
+						res.should.have.status(400);
+						res.body.should.be.a('object');
+						res.body.should.have.property('status').eql(400);
+						res.body.should.have.property('data').eql(null);
+						res.body.should.have.property('message');
+						res.body.message.should.not.eql(null);
+					  done();
+					});
+			});
+		});
 		it('it should GET an environment by the given id', (done) => {
 			let environment = new environmentModel({ name: "test env", user_cert: "test_users_ca", host_cert: "test_server_ca" })
 			environment.save((err, environment) => {

@@ -28,9 +28,15 @@ exports.createEnvironment = (req, res) => {
 };
 
 exports.readEnvironment = (req, res) => {
+	if(!mongoose.Types.ObjectId.isValid(req.params.environmentId)){
+			res.status(400).json({ status: 400, data: null, message: "Invalid environment ID" })
+			return
+	}
+	
 	Environment.findById(req.params.environmentId, (err, environment) => {
 		if (err) {
-			res.send(err);
+			res.status(400).json({ status: 400, data: null, message: err.message })
+			//res.send(err);
 		} else {
 			res.json(environment);
 		}
